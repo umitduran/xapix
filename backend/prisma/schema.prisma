@@ -25,3 +25,34 @@ model Post {
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
 }
+
+model Order {
+  id            String @id @unique
+  status        String
+  lastUpdated   DateTime @updatedAt
+  totalAmount   Float
+  totalCurrency String
+  paymentMethod String
+  purchaseDate  DateTime
+  sellerId      String
+}
+
+model Financial {
+  id                 Int @id @default(autoincrement()) @unique
+  groupId            String
+  postedDate         DateTime
+  orderId            String
+  type               String
+  subType            String
+  currencyAmount     Float
+  currencyCode       String
+}
+
+model FinancialGroup {
+  id                 String @id @unique
+  groupStart         DateTime
+  groupEnd           DateTime
+  status             String
+  sellerId           String
+}
+

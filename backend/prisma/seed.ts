@@ -2,59 +2,29 @@ import { PrismaClient, Prisma } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-const userData: Prisma.UserCreateInput[] = [
-  {
-    name: 'Alice',
-    email: 'alice@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Join the Prisma Slack',
-          content: 'https://slack.prisma.io',
-          published: true,
-        },
-      ],
-    },
-  },
-  {
-    name: 'Nilu',
-    email: 'nilu@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Follow Prisma on Twitter',
-          content: 'https://www.twitter.com/prisma',
-          published: true,
-        },
-      ],
-    },
-  },
-  {
-    name: 'Mahmoud',
-    email: 'mahmoud@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Ask a question about Prisma on GitHub',
-          content: 'https://www.github.com/prisma/prisma/discussions',
-          published: true,
-        },
-        {
-          title: 'Prisma on YouTube',
-          content: 'https://pris.ly/youtube',
-        },
-      ],
-    },
-  },
-]
+const orderData: Prisma.OrderCreateInput[] = require('./seedMockData/orders.json')
+const financialData: Prisma.FinancialCreateInput[] = require('./seedMockData/financials.json')
+const financialGroupData: Prisma.FinancialGroupCreateInput[] = require('./seedMockData/financialGroups.json')
 
 async function main() {
   console.log(`Start seeding ...`)
-  for (const u of userData) {
-    const user = await prisma.user.create({
+  for (const u of financialData) {
+    const financial = await prisma.financial.create({
       data: u,
     })
-    console.log(`Created user with id: ${user.id}`)
+    console.log(`Created financial with id: ${financial.id}`)
+  }
+  for (const u of financialGroupData) {
+    const financialGroup = await prisma.financialGroup.create({
+      data: u,
+    })
+    console.log(`Created financial with id: ${financialGroup.id}`)
+  }
+  for (const u of orderData) {
+    const order = await prisma.order.create({
+      data: u,
+    })
+    console.log(`Created order with id: ${order.id}`)
   }
   console.log(`Seeding finished.`)
 }
