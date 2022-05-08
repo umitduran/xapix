@@ -1,49 +1,30 @@
-import React from 'react'
-import { GetServerSideProps } from 'next'
-import Layout from '../components/Layout'
-import Post, { PostProps } from '../components/Post'
+import React from 'react';
+import { GetServerSideProps } from 'next';
+import Layout from '../components/Layout';
+import Post, { PostProps } from '../components/Post';
+import { Table } from 'antd';
+import ReportTable, {
+  ReportTableProps,
+} from '../components/ReportTable/ReportTable';
 
 type Props = {
-  feed: PostProps[]
-}
+  financials: ReportTableProps;
+};
 
-const Blog : React.FC<Props> = props => {
+const Index: React.FC<Props> = (props) => {
   return (
     <Layout>
-      <div className="page">
-        <h1>My Blog</h1>
-        <main>
-          {props.feed.map(post => (
-            <div key={post.id} className="post">
-              <Post post={post} />
-            </div>
-          ))}
-        </main>
-      </div>
-      <style jsx>{`
-        .post {
-          background: white;
-          transition: box-shadow 0.1s ease-in;
-        }
-
-        .post:hover {
-          box-shadow: 1px 1px 3px #aaa;
-        }
-
-        .post + .post {
-          margin-top: 2rem;
-        }
-      `}</style>
+      <ReportTable financials={props.financials} />
     </Layout>
-  )
-}
+  );
+};
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await fetch('http://localhost:3001/feed')
-  const feed = await res.json()
+  const res = await fetch('http://localhost:3001/financials');
+  const financials = await res.json();
   return {
-    props: { feed },
-  }
-}
+    props: { financials },
+  };
+};
 
-export default Blog
+export default Index;
