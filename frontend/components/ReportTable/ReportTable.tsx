@@ -46,6 +46,7 @@ const ReportTable: React.FC<{ financials: ReportTableProps }> = ({
   const [productSales, setProductSales] = useState({});
   const [shippingRevenue, setShippingRevenue] = useState({});
   const [otherIncome, setOtherIncome] = useState({});
+  const [cost, setCost] = useState({});
   const [dataSource, setDataSource] = useState([]);
 
   const getFinancialBySubType = (subType: string) => {
@@ -76,6 +77,44 @@ const ReportTable: React.FC<{ financials: ReportTableProps }> = ({
     return rowObject;
   };
 
+  //todo: refactor because of the time it is like that
+  const getCost = () => {
+    const rowObject = {
+      name: 'Cost',
+    } as any;
+    const financialByFee = getFinancialByType('fee');
+    const financialByServiceFee = getFinancialByType('serviceFee');
+    const fee = ['shipping', 'wrapping', 'handling'];
+    const serviceFee = ['warehouse'];
+    const typeOfFee = financialByFee
+      .filter((financial) => fee.includes(financial.subType))
+      .map((el) => {
+        return {
+          ...el,
+          month: moment(el.postedDate).month() + 1,
+          year: moment(el.postedDate).year(),
+        };
+      });
+    const typeOfServiceFee = financialByServiceFee
+      .filter((financial) => serviceFee.includes(financial.subType))
+      .map((el) => {
+        return {
+          ...el,
+          month: moment(el.postedDate).month() + 1,
+          year: moment(el.postedDate).year(),
+        };
+      });
+    const mergedTypes = [...typeOfFee, ...typeOfServiceFee];
+    const groupByMonth = groupBy(mergedTypes, 'month');
+    Object.entries(groupByMonth).forEach(([key, value]) => {
+      rowObject[key] = value
+        // @ts-ignore
+        .reduce((acc, curr) => acc + curr?.currencyAmount, 0)
+        .toFixed(2);
+    });
+    return rowObject;
+  };
+
   useEffect(() => {
     setProductSales(
       getRowObject({ name: 'Product Sales', subType: PRODUCT_SALES.subType })
@@ -89,14 +128,13 @@ const ReportTable: React.FC<{ financials: ReportTableProps }> = ({
     setOtherIncome(
       getRowObject({ name: 'Other Income', subType: OTHER_INCOME.subType })
     );
+    setCost(getCost());
     setDataSource([productSales, shippingRevenue, otherIncome]);
-    console.log(
-      getRowObject({ name: 'Other Income', subType: OTHER_INCOME.subType })
-    );
-    console.log([productSales, shippingRevenue, otherIncome]);
-    setDataSource([productSales, shippingRevenue, otherIncome]);
-    //todo: change the dependency to the financials
-  }, []);
+  }, [financials]);
+
+  useEffect(() => {
+    setDataSource([productSales, shippingRevenue, otherIncome, cost]);
+  }, [productSales, shippingRevenue, otherIncome, cost]);
 
   //todo: separate it
   const columns = [
@@ -117,10 +155,40 @@ const ReportTable: React.FC<{ financials: ReportTableProps }> = ({
     },
   ];
 
+  const renderSummaryRow = (row: any) => {
+    //todo: This part should work dynamically based on row data
+    return (
+      <Table.Summary fixed>
+        <Table.Summary.Row>
+          <Table.Summary.Cell index={0}>Total Sales</Table.Summary.Cell>
+          <Table.Summary.Cell index={1}>
+            <text>19.68</text>
+          </Table.Summary.Cell>
+          <Table.Summary.Cell index={2}>
+            <text>4.92</text>
+          </Table.Summary.Cell>
+        </Table.Summary.Row>
+        <Table.Summary.Row>
+          <Table.Summary.Cell index={0}>Total</Table.Summary.Cell>
+          <Table.Summary.Cell index={1}>
+            <text>15.92</text>
+          </Table.Summary.Cell>
+          <Table.Summary.Cell index={2}>
+            <text>3.96</text>
+          </Table.Summary.Cell>
+        </Table.Summary.Row>
+      </Table.Summary>
+    );
+  };
+
   return (
     <div style={styles.Container}>
       <h1>Report</h1>
-      <Table dataSource={dataSource} columns={columns}></Table>
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        summary={(pageData) => renderSummaryRow(pageData)}
+      />
     </div>
   );
 };
