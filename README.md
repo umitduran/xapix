@@ -24,6 +24,7 @@ Challenge takes Approx 5 hours to complete.
 12. Cypress could have been used.
 13. Bundle and loading could have been improved.
 14. Table Data working logic could be improved based on API.
+15. Git Commit & Task Management
 
 ## Getting Started
 
