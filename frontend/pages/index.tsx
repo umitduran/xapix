@@ -1,8 +1,6 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
 import Layout from '../components/Layout';
-import Post, { PostProps } from '../components/Post';
-import { Table } from 'antd';
 import ReportTable, {
   ReportTableProps,
 } from '../components/ReportTable/ReportTable';
