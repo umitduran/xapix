@@ -30,12 +30,6 @@ Challenge takes Approx 5 hours to complete.
 
 ### 1. Download example and install dependencies
 
-Download this example:
-
-```
-curl https://codeload.github.com/prisma/prisma-examples/tar.gz/latest | tar -xz --strip=2 prisma-examples-latest/typescript/rest-nextjs-express
-```
-
 Navigate to the example:
 
 ```
